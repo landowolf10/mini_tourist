@@ -80,7 +80,7 @@ class _UsersPageState extends State<UsersPage> {
             ),
           );
         } else {
-          List<Client> clients = clientViewModel.clients;
+          List<ClientModel> clients = clientViewModel.clients;
 
           if (clients.isEmpty) {
             return const Center(

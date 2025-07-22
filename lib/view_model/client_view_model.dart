@@ -1,15 +1,20 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:mini_tourist/api/client_api_service.dart';
 import 'package:mini_tourist/model/client.dart';
+import 'package:mini_tourist/model/create_member.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 
 class ClientViewModel extends ChangeNotifier {
   final ClientApiService _apiService = ClientApiService();
 
-  List<Client> cardNames = [];
-  List<Client> images = [];
+  List<ClientModel> cardNames = [];
+  List<ClientModel> images = [];
   String singleImage = '';
-  List<Client> clients = [];
-  Client? client;
+  List<ClientModel> clients = [];
+  ClientModel? client;
 
   Future<Map<String, dynamic>> login(String email, String password) async {
     try {
@@ -34,51 +39,121 @@ class ClientViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchCardNamesByCategory(String category) async {
+  Future<void> registerNewMember(CreateMember member) async {
     try {
-      List<Client> cards = await _apiService.getCardsByCategory(category);
-      cardNames = cards;
-      images = cards;
-
-      if (images.length == 1) {
-        singleImage = images[0].image;
-      }
-
-      for (int i = 0; i < cards.length; i++) {
-        print('Card names: ${cardNames[i].cardName}');
-      }
-
-      for (int i = 0; i < cards.length; i++) {
-        print('Card images: ${images[i].image}');
-      }
-        
-      print('Viewmodel client id: ${cardNames[0].memberId}');
+      await _apiService.registerMember(member);
       notifyListeners();
     } catch (e) {
-      // Handle errors
-      print('Error: $e');
+      print('Error en registerNewMember: $e');
+      rethrow;
+    }
+  }
+
+  Future<void> fetchCardNamesByCategory(String category) async {
+    final String cacheKey = 'cached_cards_$category';
+    final String lastFetchKey = 'last_fetch_$category';
+    final prefs = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final lastFetchString = prefs.getString(lastFetchKey);
+    DateTime? lastFetchTime = lastFetchString != null ? DateTime.tryParse(lastFetchString) : null;
+
+    bool shouldFetch = true;
+
+
+    if (lastFetchTime != null) {
+      final difference = now.difference(lastFetchTime);
+      if (difference.inSeconds < 30) {
+        // Dentro del rango de caché, intenta cargar desde local
+        final cachedJson = prefs.getString(cacheKey);
+        if (cachedJson != null) {
+          try {
+            final List<dynamic> decoded = jsonDecode(cachedJson);
+            List<ClientModel> cachedCards =
+                decoded.map((item) => ClientModel.fromJson(item)).toList();
+            images = cachedCards;
+            cardNames = cachedCards;
+            notifyListeners();
+            print('✅ Cargado desde caché local');
+            shouldFetch = false;
+          } catch (e) {
+            print('⚠️ Error al decodificar caché: $e');
+          }
+        }
+      }
+    }
+
+    if (shouldFetch) {
+      try {
+        print('📡 Llamando a la API de tarjetas premium...');
+        List<ClientModel> cards = await _apiService.getCardsByCategory(category);
+        cardNames = cards;
+        images = cards;
+
+        // Guardar en caché
+        final jsonToCache =
+            jsonEncode(cards.map((e) => e.toJson()).toList());
+        await prefs.setString(cacheKey, jsonToCache);
+        await prefs.setString(lastFetchKey, now.toIso8601String());
+
+        notifyListeners();
+        print('✅ Datos actualizados desde API y guardados en caché');
+      } catch (e) {
+        print('❌ Error al obtener tarjetas premium: $e');
+      }
     }
   }
 
   Future<void> fetchCardNamesByPremium() async {
-    try {
-      List<Client> cards = await _apiService.getCardsByPremium();
-      cardNames = cards;
-      images = cards;
+    const cacheKey = 'cached_premium_cards';
+    const lastFetchKey = 'last_premium_fetch';
+    final prefs = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final lastFetchString = prefs.getString(lastFetchKey);
+    DateTime? lastFetchTime = lastFetchString != null ? DateTime.tryParse(lastFetchString) : null;
 
-      for (int i = 0; i < cards.length; i++) {
-        print('Card names: ${cardNames[i].cardName}');
-      }
+    bool shouldFetch = true;
 
-      for (int i = 0; i < cards.length; i++) {
-        print('Card images: ${images[i].image}');
+
+    if (lastFetchTime != null) {
+      final difference = now.difference(lastFetchTime);
+      if (difference.inSeconds < 30) {
+        // Dentro del rango de caché, intenta cargar desde local
+        final cachedJson = prefs.getString(cacheKey);
+        if (cachedJson != null) {
+          try {
+            final List<dynamic> decoded = jsonDecode(cachedJson);
+            List<ClientModel> cachedCards =
+                decoded.map((item) => ClientModel.fromJson(item)).toList();
+            images = cachedCards;
+            cardNames = cachedCards;
+            notifyListeners();
+            print('✅ Cargado desde caché local');
+            shouldFetch = false;
+          } catch (e) {
+            print('⚠️ Error al decodificar caché: $e');
+          }
+        }
       }
-        
-      print('Viewmodel client id: ${cardNames[0].memberId}');
-      notifyListeners();
-    } catch (e) {
-      // Handle errors
-      print('Error: $e');
+    }
+
+    if (shouldFetch) {
+      try {
+        print('📡 Llamando a la API de tarjetas premium...');
+        List<ClientModel> cards = await _apiService.getCardsByPremium();
+        cardNames = cards;
+        images = cards;
+
+        // Guardar en caché
+        final jsonToCache =
+            jsonEncode(cards.map((e) => e.toJson()).toList());
+        await prefs.setString(cacheKey, jsonToCache);
+        await prefs.setString(lastFetchKey, now.toIso8601String());
+
+        notifyListeners();
+        print('✅ Datos actualizados desde API y guardados en caché');
+      } catch (e) {
+        print('❌ Error al obtener tarjetas premium: $e');
+      }
     }
   }
 

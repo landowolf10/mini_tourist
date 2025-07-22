@@ -1,4 +1,4 @@
-class Client {
+class ClientModel {
   int cardId;
   int memberId;
   String cardName;
@@ -10,7 +10,7 @@ class Client {
   String creationDate;
   String? updateDate;
 
-  Client({
+  ClientModel({
     required this.cardId,
     required this.memberId,
     required this.cardName,
@@ -23,8 +23,8 @@ class Client {
     this.updateDate,
   });
 
-  factory Client.fromJson(Map<String, dynamic> json) {
-    return Client(
+  factory ClientModel.fromJson(Map<String, dynamic> json) {
+    return ClientModel(
       cardId: _parseToInt(json['cardid']),
       memberId: _parseToInt(json['memberid']),
       cardName: json['cardname']?.toString() ?? '',
@@ -36,6 +36,21 @@ class Client {
       creationDate: json['creation_date']?.toString() ?? '',
       updateDate: json['update_date']?.toString(),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'cardid': cardId,
+      'memberid': memberId,
+      'cardname': cardName,
+      'city': city,
+      'category': category,
+      'premium': isPremium,
+      'image': image,
+      'back_image': backImage,
+      'creation_date': creationDate,
+      'update_date': updateDate,
+    };
   }
 
   static int _parseToInt(dynamic value) {

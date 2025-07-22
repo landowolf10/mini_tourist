@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mini_tourist/view/about_us_page.dart';
 import 'package:mini_tourist/view/find_mt_cards.dart';
 import 'package:mini_tourist/view/know_more_about_mt_cards.dart';
+import 'package:mini_tourist/view/login_page.dart';
 import 'package:mini_tourist/view/main_page.dart';
 
 class AppDrawer extends StatelessWidget {
@@ -68,6 +69,28 @@ class AppDrawer extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => const KnowMoreAboutMtCards()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.people),
+            title: const Text('Ya me anuncio en ClickCards'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const LoginPage()),
+              );
+            },
+          ),
+          ListTile(
+            leading: const Icon(Icons.confirmation_num),
+            title: const Text('Quiero contratar y anunciarme en ClickCards'),
+            onTap: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => const LoginPage()),
               );
             },
           ),

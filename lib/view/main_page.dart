@@ -27,8 +27,7 @@ class _MainPageState extends State<MainPage> {
 
   @override
   void initState() {
-    final clientViewModel =
-        Provider.of<ClientViewModel>(context, listen: false);
+    final clientViewModel = Provider.of<ClientViewModel>(context, listen: false); //This sets the images variable from the viewmodel
     clientViewModel.fetchCardNamesByPremium();
     super.initState();
   }
@@ -48,17 +47,6 @@ class _MainPageState extends State<MainPage> {
             );
           },
         ),
-        actions: <Widget>[
-          IconButton(
-            icon: const Icon(Icons.people),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginPage()),
-              );
-            },
-          )
-        ],
       ),
       body:
           Consumer<ClientViewModel>(builder: (context, clientViewModel, child) {
@@ -68,7 +56,7 @@ class _MainPageState extends State<MainPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              carouselSliderWidget(220, 0.8, 8, firstSliderImages(images)),
+              carouselSliderWidget(300, 0.8, 8, firstSliderImages(images)),
               const SizedBox(height: 40),
               firstPresentationSlider(),
               const SizedBox(height: 60),
