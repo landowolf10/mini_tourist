@@ -113,7 +113,6 @@ class ClientViewModel extends ChangeNotifier {
 
     bool shouldFetch = true;
 
-
     if (lastFetchTime != null) {
       final difference = now.difference(lastFetchTime);
       if (difference.inSeconds < 30) {
@@ -158,13 +157,49 @@ class ClientViewModel extends ChangeNotifier {
   }
 
   Future<void> getAllClients() async {
-    try {
-      clients = await _apiService.getAllClients();
+    const cacheKey = 'cached_members';
+    const lastFetchKey = 'last_members_fetch';
+    final prefs = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final lastFetchString = prefs.getString(lastFetchKey);
+    DateTime? lastFetchTime = lastFetchString != null ? DateTime.tryParse(lastFetchString) : null;
 
-      notifyListeners();
-    } catch (e) {
-      // Handle errors
-      print('Error: $e');
+    bool shouldFetch = true;
+
+    if (lastFetchTime != null) {
+      final difference = now.difference(lastFetchTime);
+      if (difference.inSeconds < 30) {
+        // Dentro del rango de caché, intenta cargar desde local
+        final cachedJson = prefs.getString(cacheKey);
+        if (cachedJson != null) {
+          try {
+            final List<dynamic> decoded = jsonDecode(cachedJson);
+            clients = decoded.map((item) => ClientModel.fromJson(item)).toList();
+            notifyListeners();
+            print('✅ Cargado desde caché local');
+            shouldFetch = false;
+          } catch (e) {
+            print('⚠️ Error al decodificar caché: $e');
+          }
+        }
+      }
+    }
+
+    if (shouldFetch) {
+      try {
+        print('📡 Llamando a la API de all clients...');
+        clients = await _apiService.getAllClients();
+
+        // Guardar en caché
+        final jsonToCache = jsonEncode(clients.map((e) => e.toJson()).toList());
+        await prefs.setString(cacheKey, jsonToCache);
+        await prefs.setString(lastFetchKey, now.toIso8601String());
+
+        notifyListeners();
+        print('✅ Datos actualizados desde API y guardados en caché');
+      } catch (e) {
+        print('❌ Error al obtener tarjetas premium: $e');
+      }
     }
   }
 
