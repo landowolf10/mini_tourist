@@ -3,6 +3,7 @@ class ClientModel {
   int memberId;
   String cardName;
   String city;
+  String place;
   String category;
   String isPremium;
   String image;
@@ -15,6 +16,7 @@ class ClientModel {
     required this.memberId,
     required this.cardName,
     required this.city,
+    required this.place,
     required this.category,
     required this.isPremium,
     required this.image,
@@ -29,6 +31,7 @@ class ClientModel {
       memberId: _parseToInt(json['memberid']),
       cardName: json['cardname']?.toString() ?? '',
       city: json['city']?.toString() ?? '',
+      place: json['place']?.toString() ?? '',
       category: json['category']?.toString() ?? '',
       isPremium: json['premium']?.toString() ?? 'No',
       image: json['image']?.toString() ?? '',
@@ -44,6 +47,7 @@ class ClientModel {
       'memberid': memberId,
       'cardname': cardName,
       'city': city,
+      'place': place,
       'category': category,
       'premium': isPremium,
       'image': image,
