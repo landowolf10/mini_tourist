@@ -39,7 +39,7 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
 
   final _categories = [
     {'label': 'Parques y atracciones', 'value': 'parks'},
-    {'label': 'Restaurantes, bares y cafeterías', 'value': 'restaurants'},
+    {'label': 'Gastronomía', 'value': 'restaurants'},
     {'label': 'Lugares y eventos', 'value': 'places_events'},
     {'label': 'Tiendas', 'value': 'stores'},
     {'label': 'Servicios', 'value': 'services'},
@@ -142,7 +142,7 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
                       Icon(Icons.person_add, color: Colors.red),
                       SizedBox(width: 10),
                       Text(
-                        'Registrar nuevo miembro',
+                        'Registrar socio',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,

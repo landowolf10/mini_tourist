@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 //const String baseUrl = 'https://mtspringboot-production.up.railway.app/'; //Railway
 //const String baseUrl = 'http://local_ip:9090/'; //Local SpringBoot real device
 //const String baseUrl = 'http://10.0.2.2:8000/'; //Local Laravel/SpringBoot emulator Android
-const String baseUrl = 'http://local_ip:8000/'; //Local Laravel real Android devive
+const String baseUrl = 'http://192.168.0.12:8000/'; //Local Laravel real Android devive
 
 final List<String> imgList = [
   'lib/assets/images/zihua.webp',
@@ -58,7 +58,7 @@ final List<Map<String, String>> allCategories = [
   },
   {
     'icon': 'lib/assets/images/restaurants.png',
-    'text': 'Restaurantes, bares y cafeterías',
+    'text': 'Gastronomía',
     'category': 'restaurants'
   },
   {
