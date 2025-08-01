@@ -70,6 +70,48 @@ class ClientApiService {
     }
   }
 
+  Future<List<ClientModel>> getCardsByPlaceNull() async {
+    final uri = Uri.parse('${baseUrl}api/v1/cards/carousel');
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      List data = json.decode(response.body);
+
+      print("Json response endoint: $data");
+
+      List<ClientModel> cardInfoList = data.map<ClientModel>((json) {
+        return ClientModel.fromJson(json);
+      }).toList();
+
+      return cardInfoList;
+    } else {
+      // If the server did not return a 200 OK response,
+      // throw an exception.
+      throw Exception('Failed to load card names');
+    }
+  }
+
+  Future<List<ClientModel>> getCardsByPlace(String place) async {
+    final uri = Uri.parse('${baseUrl}api/v1/cards/place?place=$place');
+    final response = await http.get(uri);
+
+    if (response.statusCode == 200) {
+      List data = json.decode(response.body);
+
+      print("Json response endoint: $data");
+
+      List<ClientModel> cardInfoList = data.map<ClientModel>((json) {
+        return ClientModel.fromJson(json);
+      }).toList();
+
+      return cardInfoList;
+    } else {
+      // If the server did not return a 200 OK response,
+      // throw an exception.
+      throw Exception('Failed to load card names');
+    }
+  }
+
   Future<List<ClientModel>> getCardsByCategory(String category) async {
     final response = await http.get(Uri.parse('$endPoint$category'));
 

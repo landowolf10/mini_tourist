@@ -5,11 +5,16 @@ import 'package:mini_tourist/view_model/client_view_model.dart';
 import 'package:provider/provider.dart';
 
 //Shows a popup with the details of the tapped card.
-void displayImageDetails(int index, BuildContext context) {
+void displayImageDetails(int index, BuildContext context, {required bool isPlace}) {
   final clientViewModel = Provider.of<ClientViewModel>(context, listen: false);
   final cardViewModel = Provider.of<CardViewModel>(context, listen: false);
-  final selectedCardId = clientViewModel.cardNames[index].cardId;
-  final imageURL = clientViewModel.images[index].image;
+  final selectedCardId = isPlace
+      ? clientViewModel.cardNamesPlaces[index].cardId
+      : clientViewModel.cardNames[index].cardId;
+
+  final imageURL = isPlace
+      ? clientViewModel.places[index].image
+      : clientViewModel.images[index].image;
 
   cardViewModel.addCardStatus(
     cardId: selectedCardId,

@@ -11,7 +11,9 @@ class ClientViewModel extends ChangeNotifier {
   final ClientApiService _apiService = ClientApiService();
 
   List<ClientModel> cardNames = [];
+  List<ClientModel> cardNamesPlaces = [];
   List<ClientModel> images = [];
+  List<ClientModel> places = [];
   String singleImage = '';
   List<ClientModel> clients = [];
   ClientModel? client;
@@ -46,6 +48,60 @@ class ClientViewModel extends ChangeNotifier {
     } catch (e) {
       print('Error en registerNewMember: $e');
       rethrow;
+    }
+  }
+
+  Future<void> getCardsByPlaceNull() async {
+    const String cacheKey = 'cached_places';
+    const String lastFetchKey = 'last_fetch_places';
+    final prefs = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final lastFetchString = prefs.getString(lastFetchKey);
+    DateTime? lastFetchTime = lastFetchString != null ? DateTime.tryParse(lastFetchString) : null;
+
+    bool shouldFetch = true;
+
+
+    if (lastFetchTime != null) {
+      final difference = now.difference(lastFetchTime);
+      if (difference.inSeconds < 30) {
+        // Dentro del rango de caché, intenta cargar desde local
+        final cachedJson = prefs.getString(cacheKey);
+        if (cachedJson != null) {
+          try {
+            final List<dynamic> decoded = jsonDecode(cachedJson);
+            List<ClientModel> cachedCards =
+                decoded.map((item) => ClientModel.fromJson(item)).toList();
+            places = cachedCards;
+            cardNamesPlaces = cachedCards;
+            notifyListeners();
+            print('✅ Cargado desde caché local');
+            shouldFetch = false;
+          } catch (e) {
+            print('⚠️ Error al decodificar caché: $e');
+          }
+        }
+      }
+    }
+
+    if (shouldFetch) {
+      try {
+        print('📡 Llamando a la API de lugares...');
+        List<ClientModel> cards = await _apiService.getCardsByPlaceNull();
+        cardNamesPlaces = cards;
+        places = cards;
+
+        // Guardar en caché
+        final jsonToCache =
+            jsonEncode(cards.map((e) => e.toJson()).toList());
+        await prefs.setString(cacheKey, jsonToCache);
+        await prefs.setString(lastFetchKey, now.toIso8601String());
+
+        notifyListeners();
+        print('✅ Datos actualizados desde API y guardados en caché');
+      } catch (e) {
+        print('❌ Error al obtener tarjetas de lugares: $e');
+      }
     }
   }
 
@@ -84,7 +140,7 @@ class ClientViewModel extends ChangeNotifier {
 
     if (shouldFetch) {
       try {
-        print('📡 Llamando a la API de tarjetas premium...');
+        print('📡 Llamando a la API de tarjetas por categoría...');
         List<ClientModel> cards = await _apiService.getCardsByCategory(category);
         cardNames = cards;
         images = cards;
