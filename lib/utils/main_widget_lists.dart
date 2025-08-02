@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mini_tourist/utils/constant_data.dart';
-import 'package:mini_tourist/view/widgets/main_page_widgets/card_detail_widget.dart';
-
+import 'package:mini_tourist/view/place_detail.dart';
+import 'package:mini_tourist/view_model/card_view_model.dart';
+import 'package:mini_tourist/view_model/client_view_model.dart';
+import 'package:provider/provider.dart';
 
 List<Widget> secondSliderImages(List<String> images, {required bool isPlace}) {
   return images.asMap().entries.map((entry) {
@@ -11,13 +12,35 @@ List<Widget> secondSliderImages(List<String> images, {required bool isPlace}) {
     return Builder(
       builder: (BuildContext context) {
         return GestureDetector(
-          onTap: () => displayImageDetails(index, context, isPlace: isPlace),
+          onTap: () {
+            final clientViewModel = Provider.of<ClientViewModel>(context, listen: false);
+            Provider.of<CardViewModel>(context, listen: false);
+
+            final selectedCardId = isPlace
+                ? clientViewModel.cardNamesPlaces[index].cardId
+                : clientViewModel.cardNames[index].cardId;
+
+            final cardName = isPlace
+                ? clientViewModel.cardNamesPlaces[index].cardName
+                : clientViewModel.cardNames[index].cardName;
+
+            final imageURL = imageUrl;
+
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => PlaceDetail(
+                  imageURL: imageURL,
+                  cardId: selectedCardId,
+                  cardName: cardName,
+                ),
+              ),
+            );
+          },
           child: Container(
-            margin:
-                const EdgeInsets.symmetric(horizontal: 4.0), // Espacio reducido
+            margin: const EdgeInsets.symmetric(horizontal: 4.0),
             height: 300,
-            width: MediaQuery.of(context).size.width *
-                0.45, // angosto (relativo al viewportFraction)
+            width: MediaQuery.of(context).size.width * 0.45,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(
