@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+//import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:mini_tourist/utils/main_widget_lists.dart';
 import 'package:mini_tourist/view/widgets/drawer.dart';
 import 'package:mini_tourist/view/widgets/main_page_widgets/all_categories_distribution_widget.dart';
@@ -203,7 +203,7 @@ class _MainPageState extends State<MainPage> {
                     const Text('Tel: (55) 2620 0507', style: TextStyle(color: Colors.white)),
                     const SizedBox(height: 12),
                     // Íconos sociales
-                    const Row(
+                    /*const Row(
                       children: [
                         FaIcon(FontAwesomeIcons.facebookF, color: Colors.white),
                         SizedBox(width: 12),
@@ -211,7 +211,7 @@ class _MainPageState extends State<MainPage> {
                         SizedBox(width: 12),
                         FaIcon(FontAwesomeIcons.instagram, color: Colors.white),
                       ],
-                    ),
+                    ),*/
 
                     const SizedBox(height: 24),
                     // LEGAL

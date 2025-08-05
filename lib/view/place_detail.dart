@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mini_tourist/view/map_view_screen.dart';
 import 'package:mini_tourist/view_model/card_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -22,6 +22,10 @@ class PlaceDetail extends StatefulWidget {
 class _PlaceDetailState extends State<PlaceDetail> {
   @override
   void initState() {
+    final cardViewModel = Provider.of<CardViewModel>(context, listen: false);
+    cardViewModel.getLatAndLongdByCardId(widget.cardId);
+    print('Latitud: ' + cardViewModel.lat.toString());
+    print('Longitud: ' + cardViewModel.long.toString());
     super.initState();
 
     // Se marca como visitado al entrar a la pantalla
@@ -78,21 +82,37 @@ class _PlaceDetailState extends State<PlaceDetail> {
               mainAxisSpacing: 12,
               childAspectRatio: 3 / 2,
               children: cardLabels.map((label) {
-                return Card(
-                  elevation: 4,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: Text(
-                        label,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                return GestureDetector(
+                  onTap: () {
+                    if (label == "Mapa de localización") {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => MapViewScreen(
+                            lat: cardViewModel.lat,
+                            lng: cardViewModel.long,
+                            nombre: widget.cardName,
+                          ),
                         ),
-                        textAlign: TextAlign.center,
+                      );
+                    }
+                  },
+                  child: Card(
+                    elevation: 4,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Text(
+                          label,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
                       ),
                     ),
                   ),

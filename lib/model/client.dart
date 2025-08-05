@@ -8,6 +8,8 @@ class ClientModel {
   String isPremium;
   String image;
   String backImage;
+  String lat;
+  String long;
   String creationDate;
   String? updateDate;
 
@@ -21,6 +23,8 @@ class ClientModel {
     required this.isPremium,
     required this.image,
     required this.backImage,
+    required this.lat,
+    required this.long,
     required this.creationDate,
     this.updateDate,
   });
@@ -36,6 +40,8 @@ class ClientModel {
       isPremium: json['premium']?.toString() ?? 'No',
       image: json['image']?.toString() ?? '',
       backImage: json['back_image']?.toString() ?? '',
+      lat: json['lat']?.toString() ?? '',
+      long: json['long']?.toString() ?? '',
       creationDate: json['creation_date']?.toString() ?? '',
       updateDate: json['update_date']?.toString(),
     );
@@ -52,6 +58,8 @@ class ClientModel {
       'premium': isPremium,
       'image': image,
       'back_image': backImage,
+      'lat': lat,
+      'long': long,
       'creation_date': creationDate,
       'update_date': updateDate,
     };

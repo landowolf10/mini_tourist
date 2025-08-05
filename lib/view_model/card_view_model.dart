@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mini_tourist/api/card_api_service.dart';
+import 'package:mini_tourist/model/card_lat_long.dart';
 import 'package:mini_tourist/model/card_status.dart';
 import 'package:mini_tourist/model/card_status_general_city.dart';
 import 'package:mini_tourist/model/card_status_general_count.dart';
@@ -9,6 +10,7 @@ import 'package:mini_tourist/model/card_status_general_range.dart';
 class CardViewModel extends ChangeNotifier {
   final CardApiService _apiService = CardApiService();
   CardStatusGeneralCount? _cardStatusGeneralCount;
+  CardLatLong? _cardLatLong;
   CardStatusGeneralCountDate? _cardStatusGeneralCountDate;
   CardStatusGeneralCountRange? _cardStatusGeneralCountRange;
   CardStatusGeneralCountCity? _cardStatusGeneralCountCity;
@@ -24,6 +26,9 @@ class CardViewModel extends ChangeNotifier {
 
   int get visitedCountCity => _cardStatusGeneralCountCity?.visitedCount ?? 0;
   int get downloadedCountCity => _cardStatusGeneralCountCity?.downloadedCount ?? 0;
+
+  double get lat => _cardLatLong?.lat ?? 0;
+  double get long => _cardLatLong?.long ?? 0;
 
   Future<void> addCardStatus({
     required int cardId,
@@ -45,6 +50,20 @@ class CardViewModel extends ChangeNotifier {
     } catch (e) {
       // Handle errors
       print('Error: $e');
+    }
+  }
+
+  Future<void> getLatAndLongdByCardId(int cardId) async {
+    try {
+      _cardLatLong = await _apiService.getLatAndLongdByCardId(cardId);
+
+      print("lat: " + lat.toString());
+      print("long: " + long.toString());
+
+      notifyListeners();
+    } catch (e) {
+      // Handle errors
+      print('Error in viewmodel: $e');
     }
   }
 

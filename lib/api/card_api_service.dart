@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:mini_tourist/model/card_lat_long.dart';
 import 'package:mini_tourist/model/card_status.dart';
 import 'package:mini_tourist/model/card_status_general_city.dart';
 import 'package:mini_tourist/model/card_status_general_count.dart';
@@ -26,6 +27,19 @@ class CardApiService {
       print("Status created");
     } else {
       throw Exception('Failed to add status');
+    }
+  }
+
+  Future<CardLatLong> getLatAndLongdByCardId(int cardId) async {
+    final response = await http.get(Uri.parse('${baseUrl}api/v1/card/lat-long/$cardId'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      return CardLatLong.fromJson(data);
+    } else {
+      print('Failed to download image: ${response.statusCode}');
+      throw Exception('Failed to fetch clients');
     }
   }
 
