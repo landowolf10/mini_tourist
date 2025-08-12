@@ -82,12 +82,12 @@ class _GeneralSearchPageState extends State<GeneralSearchPage> {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  buildGeneralCountContainer(cardViewModel),
+                  buildGeneralCountContainer(cardViewModel, true),
                   const SizedBox(height: 20),
                   buildGeneralCountDateContainer(
-                      context, dateController, cardViewModel),
+                      context, dateController, cardViewModel, 0, true),
                   const SizedBox(height: 20),
-                  buildGeneralCountDateRangeContainer(context, cardViewModel),
+                  buildGeneralCountDateRangeContainer(context, cardViewModel, 0, true),
                   const SizedBox(height: 20),
                   buildFilterByCityContainer(
                       cardViewModel, selectedCity, cities, onCityChanged),

@@ -70,8 +70,8 @@ class ClientApiService {
     }
   }
 
-  Future<List<ClientModel>> getCardsByPlaceNull() async {
-    final uri = Uri.parse('${baseUrl}api/v1/cards/carousel');
+  Future<List<ClientModel>> getCardsByIsPlace(String isPlace) async {
+    final uri = Uri.parse('${baseUrl}api/v1/cards/carousel?is_place=$isPlace');
     final response = await http.get(uri);
 
     if (response.statusCode == 200) {
@@ -91,7 +91,7 @@ class ClientApiService {
     }
   }
 
-  Future<List<ClientModel>> getCardsByPlace(String place) async {
+  /*Future<List<ClientModel>> getCardsByPlace(String place) async {
     final uri = Uri.parse('${baseUrl}api/v1/cards/place?place=$place');
     final response = await http.get(uri);
 
@@ -110,7 +110,7 @@ class ClientApiService {
       // throw an exception.
       throw Exception('Failed to load card names');
     }
-  }
+  }*/
 
   Future<List<ClientModel>> getCardsByCategory(String category) async {
     final response = await http.get(Uri.parse('$endPoint$category'));

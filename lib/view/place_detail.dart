@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mini_tourist/view/map_view_screen.dart';
+import 'package:mini_tourist/view/places_by_categories_screen.dart';
+import 'package:mini_tourist/view/widgets/drawer.dart';
 import 'package:mini_tourist/view_model/card_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -7,12 +9,14 @@ class PlaceDetail extends StatefulWidget {
   final String imageURL;
   final int cardId;
   final String cardName;
+  final bool isPlace;
 
   const PlaceDetail({
     Key? key,
     required this.imageURL,
     required this.cardId,
     required this.cardName,
+    required this.isPlace
   }) : super(key: key);
 
   @override
@@ -24,8 +28,6 @@ class _PlaceDetailState extends State<PlaceDetail> {
   void initState() {
     final cardViewModel = Provider.of<CardViewModel>(context, listen: false);
     cardViewModel.getLatAndLongdByCardId(widget.cardId);
-    print('Latitud: ' + cardViewModel.lat.toString());
-    print('Longitud: ' + cardViewModel.long.toString());
     super.initState();
 
     // Se marca como visitado al entrar a la pantalla
@@ -40,24 +42,46 @@ class _PlaceDetailState extends State<PlaceDetail> {
     });
   }
 
-  final List<String> cardLabels = [
-    "Galería de fotos",
+  //If is place use this list, else other list
+  final List<String> cardLabelsPlace = [
     "Información general",
+    "Galería de fotos",
     "Mapa de localización",
     "Restaurantes",
     "Hoteles",
     "Atracciones",
   ];
 
+  final List<String> normalCardLabels = [
+    "Menu",
+    "Galería de fotos",
+    "Servicios extra",
+    "Información y reservaciones",
+    "Descarga tu cupón",
+    "Mapa de localización"
+  ];
+
   @override
   Widget build(BuildContext context) {
     final cardViewModel = Provider.of<CardViewModel>(context, listen: false);
+    final List<String> currentLabels = widget.isPlace ? cardLabelsPlace : normalCardLabels;
 
     return Scaffold(
       appBar: AppBar(
         title: const Text("Detalle del Cupón"),
         backgroundColor: Colors.redAccent,
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        )
       ),
+      drawer: const AppDrawer(),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -81,20 +105,86 @@ class _PlaceDetailState extends State<PlaceDetail> {
               crossAxisSpacing: 12,
               mainAxisSpacing: 12,
               childAspectRatio: 3 / 2,
-              children: cardLabels.map((label) {
+              children: currentLabels.map((label) {
                 return GestureDetector(
                   onTap: () {
-                    if (label == "Mapa de localización") {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => MapViewScreen(
-                            lat: cardViewModel.lat,
-                            lng: cardViewModel.long,
-                            nombre: widget.cardName,
-                          ),
-                        ),
-                      );
+                    if (widget.isPlace) {
+                      switch (label) {
+                        case "Mapa de localización":
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => MapViewScreen(
+                                lat: cardViewModel.lat,
+                                lng: cardViewModel.long,
+                                nombre: widget.cardName,
+                              ),
+                            ),
+                          );
+                          break;
+                        case "Restaurantes":
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PlacesByCategoriesScreen(
+                                ownerId: widget.cardId,
+                                category: 'restaurants',
+                              ),
+                            ),
+                          );
+                          break;
+                        case "Hoteles":
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PlacesByCategoriesScreen(
+                                ownerId: widget.cardId,
+                                category: 'hotels',
+                              ),
+                            ),
+                          );
+                          break;
+                        case "Atracciones":
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => PlacesByCategoriesScreen(
+                                ownerId: widget.cardId,
+                                category: 'attractions',
+                              ),
+                            ),
+                          );
+                          break;
+                        // Agrega más casos si necesitas
+                      }
+                    } else {
+                      switch (label) {
+                        case "Mapa de localización":
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => MapViewScreen(
+                                lat: cardViewModel.lat,
+                                lng: cardViewModel.long,
+                                nombre: widget.cardName,
+                              ),
+                            ),
+                          );
+                          break;
+                        case "Descarga tu cupón":
+                          cardViewModel.donwloadImage(widget.imageURL);
+                          cardViewModel.addCardStatus(
+                            cardId: widget.cardId,
+                            status: 'Downloaded',
+                            city: 'Zihuatanejo',
+                            date: DateTime.now(),
+                          );
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("¡Cupón descargado correctamente!")),
+                          );
+                          break;
+                        // Puedes seguir agregando casos específicos para "Menu", "Servicios extra", etc.
+                      }
                     }
                   },
                   child: Card(

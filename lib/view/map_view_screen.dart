@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:mini_tourist/view/widgets/drawer.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class MapViewScreen extends StatelessWidget {
@@ -38,7 +39,21 @@ class MapViewScreen extends StatelessWidget {
     final LatLng destino = LatLng(lat, lng);
 
     return Scaffold(
-      appBar: AppBar(title: Text(nombre)),
+      appBar: AppBar(
+        title: const Text("Localización"),
+        backgroundColor: Colors.redAccent,
+        leading: Builder(
+          builder: (context) {
+            return IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () {
+                Scaffold.of(context).openDrawer();
+              },
+            );
+          },
+        )
+      ),
+      drawer: const AppDrawer(),
       body: Column(
         children: [
           Expanded(

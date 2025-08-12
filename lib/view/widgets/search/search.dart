@@ -17,7 +17,7 @@ BoxDecoration myBoxDecoration({Color? color}) {
   );
 }
 
-Widget buildGeneralCountContainer(CardViewModel cardViewModel) {
+Widget buildGeneralCountContainer(CardViewModel cardViewModel, bool isGeneralDashboard) {
   return Container(
     width: double.infinity,
     padding: const EdgeInsets.all(16),
@@ -43,9 +43,17 @@ Widget buildGeneralCountContainer(CardViewModel cardViewModel) {
         const SizedBox(height: 16),
         Row(
         children: [
-          Expanded(child: _buildStatCard('Total de tarjetas visitadas', cardViewModel.visitedCount.toString())),
+          Expanded(child: _buildStatCard(
+            'Total de tarjetas visitadas', 
+            isGeneralDashboard 
+            ? cardViewModel.visitedCount.toString()
+            : cardViewModel.visitedCountById.toString())),
           const SizedBox(width: 16),
-          Expanded(child: _buildStatCard('Total de tarjetas descargadas', cardViewModel.downloadedCount.toString())),
+          Expanded(child: _buildStatCard(
+            'Total de tarjetas descargadas', 
+            isGeneralDashboard 
+            ? cardViewModel.downloadedCount.toString()
+            : cardViewModel.downloadedCountById.toString())),
         ],
       ),
       ],
@@ -53,7 +61,7 @@ Widget buildGeneralCountContainer(CardViewModel cardViewModel) {
   );
 }
 
-Widget buildGeneralCountDateContainer(BuildContext context, TextEditingController dateController, CardViewModel cardViewModel) {
+Widget buildGeneralCountDateContainer(BuildContext context, TextEditingController dateController, CardViewModel cardViewModel, int clientId, bool isGeneralDashboard) {
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
     padding: const EdgeInsets.all(16),
@@ -70,13 +78,20 @@ Widget buildGeneralCountDateContainer(BuildContext context, TextEditingControlle
           ),
         ),
         const SizedBox(height: 12),
-        singleDateSelector(context, dateController, cardViewModel),
+        singleDateSelector(context, dateController, cardViewModel, clientId, isGeneralDashboard),
         const SizedBox(height: 12),
         Row(
           children: [
-            Expanded(child: _buildStatCard('Total de tarjetas visitadas', cardViewModel.visitedCountDate.toString())),
+            Expanded(child: _buildStatCard(
+              'Total de tarjetas visitadas', 
+              isGeneralDashboard 
+              ? cardViewModel.visitedCountDate.toString()
+              : cardViewModel.visitedCountDateById.toString())),
             const SizedBox(width: 16),
-            Expanded(child: _buildStatCard('Total de tarjetas descargadas', cardViewModel.downloadedCountDate.toString())),
+            Expanded(child: _buildStatCard('Total de tarjetas descargadas', 
+              isGeneralDashboard 
+              ? cardViewModel.downloadedCountDate.toString()
+              : cardViewModel.downloadedCountDateById.toString())),
           ],
         ),
       ],
@@ -84,8 +99,7 @@ Widget buildGeneralCountDateContainer(BuildContext context, TextEditingControlle
   );
 }
 
-Widget buildGeneralCountDateRangeContainer(
-    BuildContext context, CardViewModel cardViewModel) {
+Widget buildGeneralCountDateRangeContainer(BuildContext context, CardViewModel cardViewModel, int clientId, bool isGeneralDashboard) {
   return Container(
     margin: const EdgeInsets.symmetric(vertical: 20, horizontal: 10),
     padding: const EdgeInsets.all(16),
@@ -141,7 +155,12 @@ Widget buildGeneralCountDateRangeContainer(
                 String formattedEndDate =
                     DateFormat('yyyy-MM-dd').format(dateTimeRange.end);
 
-                await cardViewModel.getVisitedAndDownloadedCardsGeneralRange(formattedStartDate, formattedEndDate);
+                if (isGeneralDashboard) {
+                  await cardViewModel.getVisitedAndDownloadedCardsGeneralRange(formattedStartDate, formattedEndDate);
+                }
+                else {
+                  await cardViewModel.getVisitedAndDownloadedCardsDateRangeByCardId(clientId, formattedStartDate, formattedEndDate);
+                }
               }
             },
           ),
@@ -152,9 +171,17 @@ Widget buildGeneralCountDateRangeContainer(
         // Resultados
         Row(
           children: [
-            Expanded(child: _buildStatCard('Total de tarjetas visitadas', cardViewModel.visitedCountRange.toString())),
+            Expanded(child: _buildStatCard(
+              'Total de tarjetas visitadas', 
+              isGeneralDashboard
+              ? cardViewModel.visitedCountRange.toString()
+              : cardViewModel.visitedCountRangeById.toString())),
             const SizedBox(width: 16),
-            Expanded(child: _buildStatCard('Total de tarjetas descargadas', cardViewModel.downloadedCountRange.toString())),
+            Expanded(child: _buildStatCard(
+              'Total de tarjetas descargadas', 
+              isGeneralDashboard
+              ? cardViewModel.downloadedCountRange.toString()
+              : cardViewModel.downloadedCountRangeById.toString())),
           ],
         ),
       ],

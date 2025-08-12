@@ -1,38 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:mini_tourist/model/client.dart';
 import 'package:mini_tourist/view/place_detail.dart';
-import 'package:mini_tourist/view_model/card_view_model.dart';
-import 'package:mini_tourist/view_model/client_view_model.dart';
-import 'package:provider/provider.dart';
 
-List<Widget> secondSliderImages(List<String> images, {required bool isPlace}) {
-  return images.asMap().entries.map((entry) {
-    final index = entry.key;
-    final imageUrl = entry.value;
+List<Widget> carouselSliderImages(List<ClientModel> cards, {required bool isPlace}) {
+  return cards.asMap().entries.map((entry) {
+    //final index = entry.key;
+    final card = entry.value;
 
     return Builder(
       builder: (BuildContext context) {
         return GestureDetector(
           onTap: () {
-            final clientViewModel = Provider.of<ClientViewModel>(context, listen: false);
-            Provider.of<CardViewModel>(context, listen: false);
-
-            final selectedCardId = isPlace
-                ? clientViewModel.cardNamesPlaces[index].cardId
-                : clientViewModel.cardNames[index].cardId;
-
-            final cardName = isPlace
-                ? clientViewModel.cardNamesPlaces[index].cardName
-                : clientViewModel.cardNames[index].cardName;
-
-            final imageURL = imageUrl;
-
             Navigator.push(
               context,
               MaterialPageRoute(
                 builder: (context) => PlaceDetail(
-                  imageURL: imageURL,
-                  cardId: selectedCardId,
-                  cardName: cardName,
+                  imageURL: card.image,
+                  cardId: card.cardId,
+                  cardName: card.cardName,
+                  isPlace: isPlace,
                 ),
               ),
             );
@@ -44,7 +30,7 @@ List<Widget> secondSliderImages(List<String> images, {required bool isPlace}) {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(16),
               image: DecorationImage(
-                image: NetworkImage(imageUrl),
+                image: NetworkImage(card.image),
                 fit: BoxFit.cover,
               ),
               boxShadow: const [

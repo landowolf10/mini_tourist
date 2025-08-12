@@ -1,25 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:mini_tourist/model/client.dart';
+import 'package:mini_tourist/model/places_per_category.dart';
 import 'package:mini_tourist/view/client_detail.dart';
 import 'package:mini_tourist/view/widgets/drawer.dart';
+import 'package:mini_tourist/view_model/card_view_model.dart';
 import 'package:mini_tourist/view_model/client_view_model.dart';
+import 'package:provider/provider.dart';
 
-class UsersPage extends StatefulWidget {
-  const UsersPage({super.key});
+class PlacesByCategoriesScreen extends StatefulWidget {
+  final int ownerId;
+  final String category;
+
+  const PlacesByCategoriesScreen({
+    super.key,
+    required this.ownerId,
+    required this.category
+  });
 
   @override
-  State<UsersPage> createState() => _UsersPageState();
+  State<PlacesByCategoriesScreen> createState() => _PlacesByCategoriesScreentate();
 }
 
-class _UsersPageState extends State<UsersPage> {
-  final ClientViewModel clientViewModel = ClientViewModel();
-  bool isFromDashboard = false;
-
-  @override
-  void initState() {
-    isFromDashboard = true;
-    super.initState();
-  }
+class _PlacesByCategoriesScreentate extends State<PlacesByCategoriesScreen> {
+  final CardViewModel cardViewModel = CardViewModel();
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +66,7 @@ class _UsersPageState extends State<UsersPage> {
 
   Widget _buildClientList() {
     return FutureBuilder<void>(
-      future: clientViewModel.getAllClients(),
+      future: cardViewModel.getPlacesPerCategory(widget.ownerId, widget.category),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -75,37 +78,37 @@ class _UsersPageState extends State<UsersPage> {
             ),
           );
         } else {
-          List<ClientModel> clients = clientViewModel.clients;
+          List<PlacesPerCategory>? placeByCategory = cardViewModel.placesPerCategory;
 
-          if (clients.isEmpty) {
+          if (placeByCategory!.isEmpty) {
             return const Center(
               child: Text(
-                'No se encontraron clientes',
+                'No se encontraron lugares registrados',
                 style: TextStyle(fontSize: 16, color: Colors.grey),
               ),
             );
           }
 
           return ListView.separated(
-            itemCount: clients.length,
+            itemCount: placeByCategory.length,
             separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
-              final client = clients[index];
+              final place = placeByCategory[index];
               return Card(
                 elevation: 4,
                 shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                 child: ListTile(
                   contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                   title: Text(
-                    client.cardName,
+                    place.placeName,
                     style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   ),
-                  subtitle: Text(client.category),
+                  subtitle: Text(place.category),
                   trailing: const Icon(Icons.arrow_forward_ios),
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => ClientDetail(clientId: client.cardId, isFromDashboard: isFromDashboard,)),
+                      MaterialPageRoute(builder: (context) => ClientDetail(clientId: place.cardId, isFromCategoryPlace: true)),
                     );
                   },
                 ),

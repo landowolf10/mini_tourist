@@ -51,7 +51,7 @@ class ClientViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> getCardsByPlaceNull() async {
+  Future<void> getCardsByIsPlace(String isPlace) async {
     const String cacheKey = 'cached_places';
     const String lastFetchKey = 'last_fetch_places';
     final prefs = await SharedPreferences.getInstance();
@@ -87,7 +87,7 @@ class ClientViewModel extends ChangeNotifier {
     if (shouldFetch) {
       try {
         print('📡 Llamando a la API de lugares...');
-        List<ClientModel> cards = await _apiService.getCardsByPlaceNull();
+        List<ClientModel> cards = await _apiService.getCardsByIsPlace(isPlace);
         cardNamesPlaces = cards;
         places = cards;
 

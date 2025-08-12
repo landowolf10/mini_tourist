@@ -27,8 +27,8 @@ class _MainPageState extends State<MainPage> {
   @override
   void initState() {
     final clientViewModel = Provider.of<ClientViewModel>(context, listen: false); //This sets the images variable from the viewmodel
-    clientViewModel.fetchCardNamesByPremium();
-    clientViewModel.getCardsByPlaceNull();
+    clientViewModel.getCardsByIsPlace('Yes'); //First carousel
+    clientViewModel.fetchCardNamesByPremium(); //Second carousel
     super.initState();
   }
 
@@ -49,18 +49,18 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
       body: Consumer<ClientViewModel>(builder: (context, clientViewModel, child) {
-        final images = clientViewModel.images.map((cardInfo) => cardInfo.image).toList();
-        final places = clientViewModel.places.map((cardInfo) => cardInfo.image).toList();
-
+        //final places = clientViewModel.places.map((cardInfo) => cardInfo.image).toList();
+        //final images = clientViewModel.images.map((cardInfo) => cardInfo.image).toList();
+        
         return SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
-              carouselSliderWidget(300, 0.5, 8, secondSliderImages(places, isPlace: true)),
+              carouselSliderWidget(300, 0.5, 8, carouselSliderImages(clientViewModel.places, isPlace: true)),
               const SizedBox(height: 40),
               firstPresentationSlider(),
               const SizedBox(height: 60),
-              carouselSliderWidget(300, 0.5, 5, secondSliderImages(images, isPlace: false)),
+              carouselSliderWidget(300, 0.5, 5, carouselSliderImages(clientViewModel.images, isPlace: false)),
               allCategoriesDistributionWidget(clientViewModel),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
