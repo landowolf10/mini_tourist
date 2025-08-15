@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:mini_tourist/view/back_card_info_screen.dart';
 import 'package:mini_tourist/view/selected_member_dashboard_page.dart';
 import 'package:mini_tourist/view/widgets/drawer.dart';
 import 'package:mini_tourist/view_model/card_view_model.dart';
@@ -38,6 +39,8 @@ class _ClientDetailState extends State<ClientDetail> {
           city: 'Zihuatanejo',
           date: DateTime.now(),
         );
+
+        cardViewModel.getLatAndLongdByCardId(widget.clientId);
     }
 
     super.initState();
@@ -170,6 +173,30 @@ class _ClientDetailState extends State<ClientDetail> {
                               ),
                             ),
                           ),
+                          Padding(
+                              padding: const EdgeInsets.only(top: 16.0),
+                              child: ElevatedButton.icon(
+                                onPressed: () async {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => BackCardInfoScreen(
+                                        lat: cardViewModel.lat,
+                                        lng: cardViewModel.long,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.reviews),
+                                label: const Text('Ver reverso'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                ),
+                              ),
+                            ),
                       ],
                     ),
                   ),

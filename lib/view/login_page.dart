@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mini_tourist/view/general_dashboard_page.dart';
+import 'package:mini_tourist/view/selected_member_dashboard_page.dart';
 import 'package:mini_tourist/view/widgets/drawer.dart';
 import 'package:provider/provider.dart';
 import 'package:mini_tourist/view_model/client_view_model.dart';
@@ -43,10 +44,21 @@ class _LoginPageState extends State<LoginPage> {
         _passwordController.text,
       );
 
+
       if (response.containsKey('role') && response['role'] == 'admin') {
+        await viewModel.saveSession('admin');
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => const GeneralSearchPage()),
+        );
+        loggedIn = true;
+      } else if (response.containsKey('role') && response['role'] == 'member') {
+        print('Response logged in: ' + response.toString());
+        await viewModel.saveSession('member', cardId: response['cardid']);
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => SelectedMemberDashboardPage(clientId: response['cardid'])),
         );
         loggedIn = true;
       } else {

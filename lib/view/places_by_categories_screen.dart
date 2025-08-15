@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:mini_tourist/model/client.dart';
 import 'package:mini_tourist/model/places_per_category.dart';
 import 'package:mini_tourist/view/client_detail.dart';
 import 'package:mini_tourist/view/widgets/drawer.dart';
 import 'package:mini_tourist/view_model/card_view_model.dart';
-import 'package:mini_tourist/view_model/client_view_model.dart';
-import 'package:provider/provider.dart';
-
 class PlacesByCategoriesScreen extends StatefulWidget {
   final int ownerId;
   final String category;

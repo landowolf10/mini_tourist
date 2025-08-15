@@ -41,6 +41,15 @@ class ClientViewModel extends ChangeNotifier {
     }
   }
 
+  Future<void> saveSession(String role, {int? cardId}) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('role', role);
+    if (cardId != null) {
+      await prefs.setInt('cardid', cardId);
+    }
+    await prefs.setInt('loginTime', DateTime.now().millisecondsSinceEpoch);
+  }
+
   Future<void> registerNewMember(CreateMember member) async {
     try {
       await _apiService.registerMember(member);

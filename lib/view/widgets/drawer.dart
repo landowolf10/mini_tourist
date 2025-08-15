@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:mini_tourist/view/about_us_page.dart';
 import 'package:mini_tourist/view/find_mt_cards.dart';
+import 'package:mini_tourist/view/general_dashboard_page.dart';
 import 'package:mini_tourist/view/know_more_about_mt_cards.dart';
 import 'package:mini_tourist/view/login_page.dart';
 import 'package:mini_tourist/view/main_page.dart';
+import 'package:mini_tourist/view/selected_member_dashboard_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({Key? key}) : super(key: key);
@@ -75,11 +78,43 @@ class AppDrawer extends StatelessWidget {
           ListTile(
             leading: const Icon(Icons.people),
             title: const Text('Ya me anuncio en ClickCards'),
-            onTap: () {
+            onTap: () async {
+              final prefs = await SharedPreferences.getInstance();
+              final role = prefs.getString('role');
+              final loginTime = prefs.getInt('loginTime');
+
+              if (role != null && loginTime != null) {
+                final now = DateTime.now().millisecondsSinceEpoch;
+                final diffSeconds = (now - loginTime) / 1000;
+
+                if (diffSeconds <= 30) {
+                  if (role == 'admin') {
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const GeneralSearchPage()),
+                    );
+                  } else if (role == 'member') {
+                    final cardId = prefs.getInt('cardid');
+                    if (cardId != null) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => SelectedMemberDashboardPage(clientId: cardId)),
+                      );
+                    } else {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const LoginPage()),
+                      );
+                    }
+                  }
+                  return;
+                }
+              }
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const LoginPage()),
+                  builder: (context) => const LoginPage()),
               );
             },
           ),
@@ -87,11 +122,7 @@ class AppDrawer extends StatelessWidget {
             leading: const Icon(Icons.confirmation_num),
             title: const Text('Quiero contratar y anunciarme en ClickCards'),
             onTap: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => const LoginPage()),
-              );
+              //Navigate
             },
           ),
           ListTile(
