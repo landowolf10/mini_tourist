@@ -6,6 +6,7 @@ import 'package:mini_tourist/model/card_status_general_city.dart';
 import 'package:mini_tourist/model/card_status_general_count.dart';
 import 'package:mini_tourist/model/card_status_general_count_date.dart';
 import 'package:mini_tourist/model/card_status_general_range.dart';
+import 'package:mini_tourist/model/client.dart';
 import 'package:mini_tourist/model/places_per_category.dart';
 
 class CardViewModel extends ChangeNotifier {
@@ -13,6 +14,7 @@ class CardViewModel extends ChangeNotifier {
   CardStatusGeneralCount? _cardStatusGeneralCount;
   CardStatusGeneralCount? _cardStatusGeneralCountById;
   CardLatLong? _cardLatLong;
+  List<ClientModel> _beaches = [];
   List<PlacesPerCategory>? placesPerCategory;
   CardStatusGeneralCountDate? _cardStatusGeneralCountDate;
   CardStatusGeneralCountDate? _cardStatusGeneralCountDateById;
@@ -40,6 +42,8 @@ class CardViewModel extends ChangeNotifier {
 
   double get lat => _cardLatLong?.lat ?? 0;
   double get long => _cardLatLong?.long ?? 0;
+
+  List<ClientModel> get beaches => _beaches;
 
   //List<PlacesPerCategory> get placesPerCategory => _placesPerCategory ?? [];
 
@@ -72,6 +76,17 @@ class CardViewModel extends ChangeNotifier {
 
       print("lat: " + lat.toString());
       print("long: " + long.toString());
+
+      notifyListeners();
+    } catch (e) {
+      // Handle errors
+      print('Error in viewmodel: $e');
+    }
+  }
+
+  Future<void> getAllBeaches() async {
+    try {
+      _beaches = await _apiService.getAllBeaches();
 
       notifyListeners();
     } catch (e) {

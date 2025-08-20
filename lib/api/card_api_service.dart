@@ -7,6 +7,7 @@ import 'package:mini_tourist/model/card_status_general_city.dart';
 import 'package:mini_tourist/model/card_status_general_count.dart';
 import 'package:mini_tourist/model/card_status_general_count_date.dart';
 import 'package:mini_tourist/model/card_status_general_range.dart';
+import 'package:mini_tourist/model/client.dart';
 import 'package:mini_tourist/model/places_per_category.dart';
 import 'package:mini_tourist/utils/constant_data.dart';
 import 'package:http/http.dart' as http;
@@ -38,6 +39,19 @@ class CardApiService {
       final data = json.decode(response.body);
 
       return CardLatLong.fromJson(data);
+    } else {
+      print('Failed to download image: ${response.statusCode}');
+      throw Exception('Failed to fetch clients');
+    }
+  }
+
+  Future<List<ClientModel>> getAllBeaches() async {
+    final response = await http.get(Uri.parse('${baseUrl}api/v1/cards/carousel?is_place=Yes'));
+
+    if (response.statusCode == 200) {
+      final List<dynamic> data = json.decode(response.body);
+
+      return data.map((json) => ClientModel.fromJson(json)).toList();
     } else {
       print('Failed to download image: ${response.statusCode}');
       throw Exception('Failed to fetch clients');
@@ -151,11 +165,6 @@ class CardApiService {
     String endPoint = '${baseUrl}api/v1/card?cardId=$cardId&date=$date';
     final response = await http.get(Uri.parse(endPoint));
 
-    print('Endpoint: ' + endPoint);
-    print('Selected cardId: ' + cardId.toString());
-    print('Selected date: ' + date);
-    print('Response desde la API: ' + response.body);
-
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as Map<String, dynamic>;
       //print('Visited and downloaded data: ' + data.toString());
@@ -168,8 +177,6 @@ class CardApiService {
   Future<CardStatusGeneralCountRange> getVisitedAndDownloadedCardsDateRangeByCardId(int cardId, String startDate, String endDate) async {
     String endPoint = '${baseUrl}api/v1/card/count/range?startDate=$startDate&endDate=$endDate&cardId=$cardId';
     final response = await http.get(Uri.parse(endPoint));
-
-    print('Response desde la API: ' + response.body);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body) as Map<String, dynamic>;

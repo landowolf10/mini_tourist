@@ -1,8 +1,10 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mini_tourist/model/client.dart';
 import 'package:mini_tourist/model/create_member.dart';
 import 'package:mini_tourist/view/widgets/drawer.dart';
+import 'package:mini_tourist/view_model/card_view_model.dart';
 import 'package:mini_tourist/view_model/client_view_model.dart';
 import 'package:provider/provider.dart';
 
@@ -19,10 +21,15 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _nameController = TextEditingController();
+  final _latController = TextEditingController();
+  final _longController = TextEditingController();
 
   String? _selectedCity;
   String? _selectedCategory;
   String _membershipType = 'no';
+  String? _isBeach;
+  String? _belongsToBeach; // "Yes" o "No"
+  ClientModel? _selectedBeach;  // valor de la playa seleccionada
 
   File? _frontImage;
   File? _backImage;
@@ -83,11 +90,18 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
         password: _passwordController.text.trim(),
         cardName: _nameController.text.trim(),
         city: _selectedCity!,
+        place: _isBeach!,
+        belongsToBeach: _belongsToBeach,
+        beachCardName: _selectedBeach?.cardName,
         category: _selectedCategory!,
         isPremium: _membershipType == 'yes' ? 'Yes' : 'No',
         image: _frontImage,
         backImage: _backImage,
+        lat: _latController.text.trim(),
+        long: _longController.text.trim()
       );
+
+      print(newMember);
 
       try {
         setState(() => _isLoading = true); // ✅ Comienza la carga
@@ -113,6 +127,8 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
 
   @override
   Widget build(BuildContext context) {
+    final cardViewModel = Provider.of<CardViewModel>(context);
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('MiniTourist'),
@@ -169,6 +185,78 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
                     onChanged: (val) => setState(() => _selectedCity = val),
                   ),
                   const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: _isBeach,
+                    items: const [
+                      DropdownMenuItem(value: 'Yes', child: Text('Sí')),
+                      DropdownMenuItem(value: 'No', child: Text('No')),
+                    ],
+                    onChanged: (val) async {
+                      setState(() {
+                        _isBeach = val;
+                        //print('Is beach: ' + _isBeach.toString());
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: '¿Es una playa?',
+                      prefixIcon: const Icon(Icons.beach_access),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      focusedBorder:
+                          const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                    ),
+                    validator: (val) => val == null ? 'Seleccione una opción' : null,
+                  ),
+                  if (_isBeach == 'No') ...[
+                    const SizedBox(height: 16),
+                    DropdownButtonFormField<String>(
+                      value: _belongsToBeach,
+                      items: const [
+                        DropdownMenuItem(value: 'Yes', child: Text('Sí')),
+                        DropdownMenuItem(value: 'No', child: Text('No')),
+                      ],
+                      onChanged: (val) async {
+                        setState(() {
+                          _belongsToBeach = val;
+                          _selectedBeach = null; // reset al cambiar
+                        });
+                        if (val == 'Yes') {
+                          await cardViewModel.getAllBeaches(); // cargar opciones de la API
+                        }
+                      },
+                      decoration: InputDecoration(
+                        labelText: '¿Pertenece a una playa?',
+                        prefixIcon: const Icon(Icons.beach_access),
+                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                        focusedBorder:
+                            const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                      ),
+                      validator: (val) => val == null ? 'Seleccione una opción' : null,
+                    ),
+                  ],
+                  if (_belongsToBeach == 'Yes' && _isBeach == 'No') ...[
+                    const SizedBox(height: 16),
+                    DropdownButton<ClientModel>(
+                      hint: const Text("Selecciona una playa"),
+                      value: _selectedBeach,
+                      items: cardViewModel.beaches.map((beach) {
+                        return DropdownMenuItem(
+                          value: beach,
+                          child: Text(beach.cardName),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedBeach = value;
+                        });
+
+                        if (value != null) {
+                          print("ID de la playa seleccionada: ${value.cardId}");
+                          print("Nombre de la playa seleccionada: ${value.cardName}");
+                        }
+                      },
+                    )
+                  ],
+                  const SizedBox(height: 16),
                   _buildDropdownField(
                     label: 'Categoría',
                     value: _selectedCategory,
@@ -209,6 +297,10 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
                       style: TextStyle(fontWeight: FontWeight.bold)),
                   _buildImagePicker(() => _pickImage(false), _backImage),
                   const SizedBox(height: 30),
+                  _buildInputField(
+                      'Latitud', _latController, TextInputType.name),
+                  _buildInputField(
+                      'Longitud', _longController, TextInputType.name),
                   Center(
                     child: ElevatedButton.icon(
                       icon: _isLoading

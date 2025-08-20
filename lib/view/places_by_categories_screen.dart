@@ -3,6 +3,7 @@ import 'package:mini_tourist/model/places_per_category.dart';
 import 'package:mini_tourist/view/client_detail.dart';
 import 'package:mini_tourist/view/widgets/drawer.dart';
 import 'package:mini_tourist/view_model/card_view_model.dart';
+
 class PlacesByCategoriesScreen extends StatefulWidget {
   final int ownerId;
   final String category;

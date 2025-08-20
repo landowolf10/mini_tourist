@@ -43,8 +43,20 @@ class ClientApiService {
     request.fields['password'] = createMember.password;
     request.fields['cardName'] = createMember.cardName;
     request.fields['city'] = createMember.city;
+    request.fields['place'] = createMember.place;
     request.fields['category'] = createMember.category;
     request.fields['premium'] = createMember.isPremium;
+    request.fields['lat'] = createMember.lat;
+    request.fields['long'] = createMember.long;
+
+     // Campos opcionales - solo enviar si no son null
+    if (createMember.belongsToBeach != null) {
+      request.fields['belongsToBeach'] = createMember.belongsToBeach!;
+    }
+    
+    if (createMember.beachCardName != null) {
+      request.fields['beachCardName'] = createMember.beachCardName!;
+    }
 
     if (createMember.image != null) {
       request.files.add(await http.MultipartFile.fromPath('imageFile', createMember.image!.path));

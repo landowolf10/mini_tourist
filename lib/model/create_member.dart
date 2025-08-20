@@ -5,20 +5,30 @@ class CreateMember {
   String password;
   String cardName;
   String city;
+  String place;
+  String? belongsToBeach;
+  String? beachCardName;
   String category;
   String isPremium;
   File? image;
   File? backImage;
+  String lat;
+  String long;
 
   CreateMember({
     required this.email,
     required this.password,
     required this.cardName,
     required this.city,
+    required this.place,
+    this.belongsToBeach,
+    this.beachCardName,
     required this.category,
     required this.isPremium,
     required this.image,
-    required this.backImage
+    required this.backImage,
+    required this.lat,
+    required this.long
   });
 
   factory CreateMember.fromJson(Map<String, dynamic> json) {
@@ -27,10 +37,15 @@ class CreateMember {
       password: json['password'],
       cardName: json['cardname']?.toString() ?? '',
       city: json['city']?.toString() ?? '',
+      place: json['place']?.toString() ?? '',
+      belongsToBeach: json['belongsToBeach']?.toString(),
+      beachCardName: json['beachCardName']?.toString(),
       category: json['category']?.toString() ?? '',
       isPremium: json['premium']?.toString() ?? 'No',
       image: json['image'],
       backImage: json['back_image'],
+      lat: json['lat']?.toString() ?? '',
+      long: json['long']?.toString() ?? '',
     );
   }
 
@@ -40,10 +55,36 @@ class CreateMember {
       'password': password,
       'cardname': cardName,
       'city': city,
+      'place': place,
+      'belongsToBeach': belongsToBeach,
+      'beachCardName': beachCardName,
       'category': category,
       'premium': isPremium,
       'image': image,
       'back_image': backImage,
+      'lat': lat,
+      'long': long,
     };
+  }
+
+  /// 👇 Método para depuración: imprime todo el modelo
+  @override
+  String toString() {
+    return '''
+      CreateMember(
+        email: $email,
+        password: $password,
+        cardName: $cardName,
+        city: $city,
+        place: $place,
+        belongsToBeach: $belongsToBeach,
+        beachCardName: $beachCardName,
+        category: $category,
+        isPremium: $isPremium,
+        image: ${image != null ? image!.path : "null"},
+        backImage: ${backImage != null ? backImage!.path : "null"},
+        lat: $lat,
+        long: $long
+      )''';
   }
 }
