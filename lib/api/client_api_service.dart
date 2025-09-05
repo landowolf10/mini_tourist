@@ -48,6 +48,11 @@ class ClientApiService {
     request.fields['premium'] = createMember.isPremium;
     request.fields['lat'] = createMember.lat;
     request.fields['long'] = createMember.long;
+    request.fields['schedule'] = createMember.schedule!;
+    request.fields['phone_number'] = createMember.phoneNumber!;
+    request.fields['web'] = createMember.web!;
+    request.fields['social_media'] = createMember.socialMedia!;
+    request.fields['characteristics'] = createMember.characteristics!;
 
      // Campos opcionales - solo enviar si no son null
     if (createMember.belongsToBeach != null) {

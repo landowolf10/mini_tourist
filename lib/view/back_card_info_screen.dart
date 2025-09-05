@@ -7,11 +7,21 @@ import 'package:url_launcher/url_launcher.dart';
 class BackCardInfoScreen extends StatelessWidget {
   final double lat;
   final double lng;
+  final String? schedule;
+  final String? phoneNumber;
+  final String? web;
+  final String? socialMedia;
+  final String? characteristics;
 
   const BackCardInfoScreen({
     super.key,
     required this.lat,
     required this.lng,
+    this.schedule,
+    this.phoneNumber,
+    this.web,
+    this.socialMedia,
+    this.characteristics
   });
 
   void _abrirIndicaciones() async {
@@ -122,8 +132,8 @@ class BackCardInfoScreen extends StatelessWidget {
                             TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 6),
-                      _infoRow(Icons.access_time, "Lunes - Viernes: 9:00 AM - 8:00 PM"),
-                      _infoRow(Icons.access_time, "Sábado - Domingo: 10:00 AM - 6:00 PM"),
+                      _infoRow(Icons.access_time, schedule!),
+                      //_infoRow(Icons.access_time, "Sábado - Domingo: 10:00 AM - 6:00 PM"),
                       const Divider(),
 
                       const Text(
@@ -131,12 +141,11 @@ class BackCardInfoScreen extends StatelessWidget {
                         style:
                             TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      _infoRow(Icons.phone, "55 1234 5678",
-                          onTap: () => launchUrl(Uri.parse("tel:5512345678"))),
-                      _infoRow(Icons.language, "www.ejemplo.com",
-                          onTap: () => launchUrl(Uri.parse("https://www.ejemplo.com"))),
-                      _infoRow(Icons.facebook, "/EjemploNegocio",
-                          onTap: () => launchUrl(Uri.parse("https://facebook.com/EjemploNegocio"))),
+                      _infoRow(Icons.phone, phoneNumber!, onTap: () => launchUrl(Uri.parse(phoneNumber!))),
+                      if (web != null && web!.isNotEmpty)
+                        _infoRow(Icons.language, web!, onTap: () => launchUrl(Uri.parse(web!))),
+                      if (socialMedia != null && socialMedia!.isNotEmpty)
+                        _infoRow(Icons.facebook, socialMedia!, onTap: () => launchUrl(Uri.parse(socialMedia!))),
                       const Divider(),
 
                       const Text(
@@ -144,9 +153,7 @@ class BackCardInfoScreen extends StatelessWidget {
                         style:
                             TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
-                      _infoRow(Icons.restaurant, "Comida oriental"),
-                      _infoRow(Icons.fastfood, "Antojitos mexicanos"),
-                      _infoRow(Icons.local_cafe, "Cafetería"),
+                      _infoRow(Icons.restaurant, characteristics!),
                     ],
                   ),
                 ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:mini_tourist/api/card_api_service.dart';
 import 'package:mini_tourist/model/card_lat_long.dart';
 import 'package:mini_tourist/model/card_status.dart';
@@ -8,6 +9,7 @@ import 'package:mini_tourist/model/card_status_general_count_date.dart';
 import 'package:mini_tourist/model/card_status_general_range.dart';
 import 'package:mini_tourist/model/client.dart';
 import 'package:mini_tourist/model/places_per_category.dart';
+import 'package:mini_tourist/view_model/client_view_model.dart';
 
 class CardViewModel extends ChangeNotifier {
   final CardApiService _apiService = CardApiService();
@@ -21,6 +23,7 @@ class CardViewModel extends ChangeNotifier {
   CardStatusGeneralCountRange? _cardStatusGeneralCountRange;
   CardStatusGeneralCountRange? _cardStatusGeneralCountRangeById;
   CardStatusGeneralCountCity? _cardStatusGeneralCountCity;
+  ClientModel? _client;
 
   int get visitedCount => _cardStatusGeneralCount?.visitedCount ?? 0;
   int get downloadedCount => _cardStatusGeneralCount?.downloadedCount ?? 0;
@@ -42,6 +45,12 @@ class CardViewModel extends ChangeNotifier {
 
   double get lat => _cardLatLong?.lat ?? 0;
   double get long => _cardLatLong?.long ?? 0;
+
+  String get schedule => _cardLatLong?.schedule ?? '';
+  String get phoneNumber => _cardLatLong?.phoneNumber ?? '';
+  String get web => _cardLatLong?.web ?? '';
+  String get socialMedia => _cardLatLong?.socialMedia ?? '';
+  String get characteristics => _cardLatLong?.characteristics ?? '';
 
   List<ClientModel> get beaches => _beaches;
 

@@ -23,12 +23,19 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
   final _nameController = TextEditingController();
   final _latController = TextEditingController();
   final _longController = TextEditingController();
+  final _scheduleController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _webController = TextEditingController();
+  final _socialMediaController = TextEditingController();
+  final _characteristicsController = TextEditingController();
 
   String? _selectedCity;
   String? _selectedCategory;
   String _membershipType = 'no';
   String? _isBeach;
   String? _belongsToBeach; // "Yes" o "No"
+  String? _hasWeb; // "Yes" o "No"
+  String? _hasSocialMedia; // "Yes" o "No"
   ClientModel? _selectedBeach;  // valor de la playa seleccionada
 
   File? _frontImage;
@@ -98,7 +105,12 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
         image: _frontImage,
         backImage: _backImage,
         lat: _latController.text.trim(),
-        long: _longController.text.trim()
+        long: _longController.text.trim(),
+        schedule: _scheduleController.text.trim(),
+        phoneNumber: _phoneController.text.trim(),
+        web: _webController.text.trim(),
+        socialMedia: _socialMediaController.text.trim(),
+        characteristics: _characteristicsController.text.trim()
       );
 
       print(newMember);
@@ -301,6 +313,63 @@ class _RegisterMemberPageState extends State<RegisterMemberPage> {
                       'Latitud', _latController, TextInputType.name),
                   _buildInputField(
                       'Longitud', _longController, TextInputType.name),
+                  const SizedBox(height: 16),
+                  _buildInputField('Schedule', _scheduleController, TextInputType.text),
+                  const SizedBox(height: 16),
+                  _buildInputField('Phone number', _phoneController, TextInputType.phone),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: _hasWeb,
+                    items: const [
+                      DropdownMenuItem(value: 'Yes', child: Text('Sí')),
+                      DropdownMenuItem(value: 'No', child: Text('No')),
+                    ],
+                    onChanged: (val) async {
+                      setState(() {
+                        _hasWeb = val;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: '¿Tiene página web?',
+                      prefixIcon: const Icon(Icons.beach_access),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      focusedBorder:
+                          const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                    ),
+                    validator: (val) => val == null ? 'Seleccione una opción' : null,
+                  ),
+                  if (_hasWeb == 'Yes') ...[
+                    const SizedBox(height: 16),
+                    _buildInputField('Web', _webController, TextInputType.text)
+                  ],
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: _hasSocialMedia,
+                    items: const [
+                      DropdownMenuItem(value: 'Yes', child: Text('Sí')),
+                      DropdownMenuItem(value: 'No', child: Text('No')),
+                    ],
+                    onChanged: (val) async {
+                      setState(() {
+                        _hasSocialMedia = val;
+                      });
+                    },
+                    decoration: InputDecoration(
+                      labelText: '¿Tiene redes sociales?',
+                      prefixIcon: const Icon(Icons.people),
+                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                      focusedBorder:
+                          const OutlineInputBorder(borderSide: BorderSide(color: Colors.red)),
+                    ),
+                    validator: (val) => val == null ? 'Seleccione una opción' : null,
+                  ),
+                  if (_hasSocialMedia == 'Yes') ...[
+                    const SizedBox(height: 16),
+                    _buildInputField('Social media', _socialMediaController, TextInputType.text)
+                  ],
+                  const SizedBox(height: 16),
+                  _buildInputField('Características', _characteristicsController, TextInputType.text),
+                  const SizedBox(height: 16),
                   Center(
                     child: ElevatedButton.icon(
                       icon: _isLoading

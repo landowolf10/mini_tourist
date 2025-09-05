@@ -14,6 +14,11 @@ class CreateMember {
   File? backImage;
   String lat;
   String long;
+  String? schedule;
+  String? phoneNumber;
+  String? web;
+  String? socialMedia;
+  String? characteristics;
 
   CreateMember({
     required this.email,
@@ -28,7 +33,12 @@ class CreateMember {
     required this.image,
     required this.backImage,
     required this.lat,
-    required this.long
+    required this.long,
+    this.schedule,
+    this.phoneNumber,
+    this.web,
+    this.socialMedia,
+    this.characteristics
   });
 
   factory CreateMember.fromJson(Map<String, dynamic> json) {
@@ -46,6 +56,11 @@ class CreateMember {
       backImage: json['back_image'],
       lat: json['lat']?.toString() ?? '',
       long: json['long']?.toString() ?? '',
+      schedule: json['schedule']?.toString() ?? '',
+      phoneNumber: json['phone_number']?.toString() ?? '',
+      web: json['web']?.toString() ?? '',
+      socialMedia: json['social_media']?.toString() ?? '',
+      characteristics: json['characteristics']?.toString() ?? '',
     );
   }
 
@@ -64,6 +79,11 @@ class CreateMember {
       'back_image': backImage,
       'lat': lat,
       'long': long,
+      'schedule': schedule,
+      'phone_number': phoneNumber,
+      'web': web,
+      'social_media': socialMedia,
+      'characteristics': characteristics,
     };
   }
 

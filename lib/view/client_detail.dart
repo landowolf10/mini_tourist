@@ -183,6 +183,11 @@ class _ClientDetailState extends State<ClientDetail> {
                                       builder: (_) => BackCardInfoScreen(
                                         lat: cardViewModel.lat,
                                         lng: cardViewModel.long,
+                                        schedule: cardViewModel.schedule,
+                                        phoneNumber: cardViewModel.phoneNumber,
+                                        web: cardViewModel.web,
+                                        socialMedia: cardViewModel.socialMedia,
+                                        characteristics: cardViewModel.characteristics,
                                       ),
                                     ),
                                   );
